@@ -1,23 +1,42 @@
-import { useState, useEffect, useLayoutEffect } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useEffect, useLayoutEffect } from "react";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  updateToken,
+  setLoginStatus,
+  hamdleLogout,
+} from "../slicers/AuthSlice";
+import { useNavigate } from "react-router-dom";
 
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState();
-//   const navigate = useNavigate();
+  // const [token, setToken] = useState();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await axios.get("/api/auth/token");
-        setToken(response.data.token);
+        const response = await axios.get("/api/auth/refresh-token");
+        dispatch(updateToken(response.data.token));
+        dispatch(setLoginStatus(true));
+
+        // setToken(response.data.token);
       } catch {
-        setToken(null);
+        dispatch(updateToken(null));
+        dispatch(setLoginStatus(false));
+        // setToken(null);
       }
     };
 
     fetchToken();
   }, []);
+  useEffect(() => {
+
+    if (!token) {
+      navigate('/')
+    }
+  }, [token]);
 
   useLayoutEffect(() => {
     const authInterceptor = axios.interceptors.response.use((config) => {
@@ -45,12 +64,15 @@ const AuthProvider = ({ children }) => {
           try {
             const response = await axios.get("/api/auth/refresh-token");
             const newToken = response.data.token;
-            setToken(newToken);
+            dispatch(updateToken(newToken));
+            dispatch(setLoginStatus(true));
+            // setToken(newToken);
             originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
             return axios(originalRequest);
           } catch {
-            setToken(null);
-            // navigate("/login");
+            dispatch(hamdleLogout());
+            // setToken(null);
+            navigate("/login");
             // return Promise.reject(err);
           }
         }

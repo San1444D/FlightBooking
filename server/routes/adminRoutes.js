@@ -1,10 +1,14 @@
 import { Router } from "express";
+import { isAdmin } from "../middlewares/authMiddleware.js";
 
-const router = Router();
+const adminRouter = Router();
 
+adminRouter.use(isAdmin)
 
-router.get("/", (req, res) => {
+adminRouter.get("/", (req, res) => {
     res.send("Admin Routes");
 });
 
-export default router;
+
+
+export default adminRouter;

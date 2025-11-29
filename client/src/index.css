@@ -1,68 +1,32 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import 'tailwindcss';
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+@theme {
+  --color-primary: #1E40AF;
+  --color-secondary: #3B82F6;
+  --color-thirdary: #60A5FA;
+  --color-primary-dark: #1E3A8A;
+  --color-bg-light: #;
+  --color-bg-dark: ;
+  --color-fg-brand: #1E40AF;
+  --color-neutral-primary: #FFFFFF;
+  --color-neutral-secondary: #F3F4F6;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer components {
+  .navbar {
+    @apply bg-blue-600 text-white flex justify-between items-center w-full h-16 rounded-b-2xl sticky top-0 z-10 px-4;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+
+  .home-page {
+    @apply w-full relative min-h-screen bg-transparent flex flex-col justify-center gap-4 items-center;
+
+    &::before {
+      content: "";
+      @apply absolute inset-0 bg-fixed bg-cover bg-center w-full  opacity-75 -z-1;
+      background-image: url(/src/assets/wing-airplane-flying-clouds.jpg);
+      pointer-events: none;
+
+
+    }
   }
 }

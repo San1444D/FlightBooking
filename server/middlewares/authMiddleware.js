@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const authMiddleware = (req, res, next) => {
     try {
-        const authHeader = req.headers.authorization;
+        const authHeader = req.headers['Authorization'];
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             new Error('Authorization header missing or malformed');
