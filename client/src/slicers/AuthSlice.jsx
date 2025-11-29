@@ -6,7 +6,7 @@ export const authSlice = createSlice({
     user: null,
     token: null,
     isLoginedIn: false,
-    userType: null,
+    userType: localStorage.getItem("userType") || null,
   },
   reducers: {
     // Define your reducers here
@@ -24,9 +24,11 @@ export const authSlice = createSlice({
     },
     updateUserType: (state, action) => {
       state.userType = action.payload;
+      localStorage.setItem("userType", state.userType);
       console.log("User type updated:", state.userType);
     },
     hamdleLogout: (state, action) => {
+      localStorage.setItem("userType", null);
       state.user = null;
       state.token = null;
       state.isLoginedIn = false;

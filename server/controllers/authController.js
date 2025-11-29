@@ -8,8 +8,16 @@ const PASSWORD_SECRET = process.env.PASSWORD_SECRET || 'default_password_secret'
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS) || 10;
 const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || '15m';
 const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || '7d';
-const COOKIE_EXPIRY = process.env.COOKIE_EXPIRY || 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
+const COOKIE_EXPIRY = parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000; // ms
+const SECURE_FLAG = process.env.NODE_ENV === 'production';
+const COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: SECURE_FLAG, // secure only in production
+    sameSite: SECURE_FLAG ? 'None' : 'Lax', // None + Secure for cross-site in prod; Lax for local dev
+    path: '/', // ensure path is aligned when clearing cookie
+    maxAge: COOKIE_EXPIRY,
+};
 
 const tokenGenerator = async (decoded, res, refreshToken = false) => {
     const payload = {
@@ -19,14 +27,14 @@ const tokenGenerator = async (decoded, res, refreshToken = false) => {
         userType: decoded.userType,
     };
     const newAccessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
-    if (decoded.exp * 1000 - Date.now() < 24 * 60 * 60 * 1000 || refreshToken == true) {
+
+    // guard: decoded may not have exp (when decoded is a user doc)
+    const hasExp = typeof decoded?.exp === 'number';
+    const willExpireSoon = hasExp && (decoded.exp * 1000 - Date.now() < 24 * 60 * 60 * 1000);
+
+    if (willExpireSoon || refreshToken == true) {
         const newRefreshToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRY });
-        await res.cookie('refreshToken', newRefreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            maxAge: COOKIE_EXPIRY,
-        });
+        await res.cookie('refreshToken', newRefreshToken, COOKIE_OPTIONS);
     }
     return newAccessToken;
 }
@@ -34,10 +42,11 @@ const tokenGenerator = async (decoded, res, refreshToken = false) => {
 const loginController = async (req, res) => {
     const { email, password, userType } = req.body;
     const cacheKey = `user:${email}:${userType}`;
+    console.log(cacheKey)
 
     const userData = await getOrSetCache(cacheKey, async () => {
         return await User.findOne({ email, userType, isDeleted: false },
-            { email: 1, username: 1, password: 1, userType: 1 });
+            { email: 1, username: 1, password: 1, userType: 1 }).lean();;
     });
 
     if (!userData) {
@@ -45,31 +54,17 @@ const loginController = async (req, res) => {
     } else {
         const isPasswordValid = await bcrypt.compare(password + PASSWORD_SECRET, userData.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid password' });
+            return res.status(403).json({ message: 'Invalid password' });
         }
         if (userData.userType !== userType) {
-            return res.status(401).json({ message: `User type mismatch, Please Login as ${userData.userType}` });
+            return res.status(403).json({ message: `User type mismatch, Please Login as ${userData.userType}` });
         }
 
-        // const tokenPayload = {
-        //     id: userData.id,
-        //     username: decoded.username,
-        //     email: userData.email,
-        //     userType: userData.userType,
-        // };
-
-        // const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
-        // const refreshToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRY });
-
-        // res.cookie('refreshToken', refreshToken, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === 'production',
-        //     sameSite: 'Strict',
-        //     maxAge: COOKIE_EXPIRY,
-        // });
-        delete userData.password; // Remove password before sending user data
+        // Return shallow copy without password
+        const safeUserData = { ...userData };
+        delete safeUserData.password;
         const accessToken = await tokenGenerator(userData, res, true);
-        return res.status(200).json({ accessToken, userData });
+        return res.status(200).json({ accessToken, userData: safeUserData });
 
     }
 };
@@ -91,17 +86,33 @@ const signupController = async (req, res) => {
         email,
         password: hashedPassword,
     });
-    if (userType === 'operator' && userType === 'admin') {
+    if (userType === 'operator' || userType === 'admin') {
         newUser.isApproval = false;
     }
     await newUser.save();
     return res.status(201).json({ message: 'User created successfully' });
 }
 
+const getMe = async (req, res) => {
+    const { refreshToken } = req.cookies ? req.cookies : {};
+    if (!refreshToken) {
+        return res.status(403).json({ message: 'Refresh token missing' });
+    }
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+        const accessToken = await tokenGenerator(decoded, res);
+        console.log(decoded)
+        return res.status(200).json({ accessToken, userData: decoded });
+    } catch (err) {
+        return res.status(403).json({ message: 'Invalid refresh token' });
+    }
+
+}
 const refreshTokenController = async (req, res) => {
     const { refreshToken } = req.cookies ? req.cookies : {};
     if (!refreshToken) {
-        return res.status(401).json({ message: 'Refresh token missing' });
+        return res.status(403).json({ message: 'Refresh token missing' });
     }
     try {
         const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
@@ -131,21 +142,22 @@ const refreshTokenController = async (req, res) => {
 
 
 const logoutController = async (req, res) => {
-    // Clear the HttpOnly cookie by setting its Max-Age to 0
-    res.cookie('yourCookieName', '', {
-        httpOnly: true,
-        expires: new Date(0), // Sets expiration to a past date
-        // Add other cookie options like path, domain, secure if needed
-    });
-    // You might also want to clear session data or invalidate tokens here
-    res.status(200).send('Logged out successfully');
-}
+    try {
+        // Clear cookie using the same settings used when setting it
+        res.clearCookie("refreshToken", COOKIE_OPTIONS);
+        return res.status(200).json({ message: "Logout Success" });
+    } catch (err) {
+        console.error("Logout error:", err);
+        return res.status(500).json({ message: "Logout Failed" });
+    }
+};
 
 
 const AuthController = {
     loginController,
     signupController,
     refreshTokenController,
+    getMe,
     logoutController,
 };
 

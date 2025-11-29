@@ -1,42 +1,62 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import {  useState } from "react";
+import {  useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   setLoginStatus,
   updateToken,
   updateUser,
   updateUserType,
 } from "../slicers/AuthSlice";
-import axios from "axios";
-
+import api from "../axiosHelper";
 import passIcon from "../assets/password.svg";
 
 const LoginForm = ({ title, userType = "customer", redirectUrl = "/" }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:5000/api/auth/login", {
+    const tid = toast.loading("Loging...");
+    //do something else
+
+    await api
+      .post("/api/auth/login", {
         email,
         password,
         userType,
       })
       .then((response) => {
+        console.log(response)
         dispatch(updateToken(response.data.accessToken));
         dispatch(updateUser(response.data.userData));
         dispatch(setLoginStatus(true));
         dispatch(updateUserType(response.data.userData.userType));
         console.log("Login successful:", response.data);
-        // toast logic can be added here
-        navigate(redirectUrl);
+        setTimeout(() => {
+          navigate(redirectUrl);
+        }, 2000);
+        toast.update(tid, {
+          render: "Login Success",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+          closeButton: null,
+        });
       })
       .catch((error) => {
         console.error("Login failed:", error);
+        toast.update(tid, {
+          render: `Login failed: ${error.response.data.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+          closeButton: null,
+        });
       });
   };
 
@@ -55,7 +75,7 @@ const LoginForm = ({ title, userType = "customer", redirectUrl = "/" }) => {
     <>
       <div
         className="flex w-2/6  max-w-sm mx-auto my-10 flex-col p-6 items-center justify-center
-       border-2 border-gray-300/80 rounded-2xl shadow-lg/20"
+       border-2 border-gray-300/80 rounded-2xl shadow-lg/20 "
       >
         <form
           onSubmit={handleSubmit}
@@ -176,7 +196,7 @@ const LoginForm = ({ title, userType = "customer", redirectUrl = "/" }) => {
         )}
         {userType !== "admin" ? (
           <p>
-            Register as{" "}
+            Login as{" "}
             <button
               type="button"
               className="text-blue-500 hover:underline "

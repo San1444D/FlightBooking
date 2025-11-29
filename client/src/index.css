@@ -13,16 +13,20 @@
 }
 
 @layer components {
+  body {
+    @apply min-h-[83.5vh];
+  }
+
   .navbar {
     @apply bg-blue-600 text-white flex justify-between items-center w-full h-16 rounded-b-2xl sticky top-0 z-10 px-4;
   }
 
   .home-page {
-    @apply w-full relative min-h-screen bg-transparent flex flex-col justify-center gap-4 items-center;
+    @apply w-full relative min-h-screen bg-transparent flex flex-col justify-center gap-4 md:gap-8 items-center;
 
     &::before {
       content: "";
-      @apply absolute inset-0 bg-fixed bg-cover bg-center w-full  opacity-75 -z-1;
+      @apply absolute inset-0 bg-fixed bg-cover bg-center w-full opacity-75 -z-1;
       background-image: url(/src/assets/wing-airplane-flying-clouds.jpg);
       pointer-events: none;
 

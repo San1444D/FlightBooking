@@ -1,7 +1,8 @@
-import axios from "axios";
+import api from "../axiosHelper";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { hamdleLogout } from "../slicers/AuthSlice";
+import { toast } from "react-toastify";
 
 const customerMenu = [
   { name: "Home", path: "/" },
@@ -11,14 +12,16 @@ const customerMenu = [
 ];
 
 const adminMenu = [
-  { name: "Dashboard", path: "/admin/dashboard" },
+  { name: "Dashboard", path: "/admin" },
   { name: "Manage Flights", path: "/admin/flights" },
   { name: "Users", path: "/admin/users" },
+   { name: "Logout", path: "/" },
 ];
 
 const operatorMenu = [
-  { name: "Flights", path: "/operator/flights" },
+  { name: "Flights", path: "/flight-admin" },
   { name: "Bookings", path: "/operator/bookings" },
+   { name: "Logout", path: "/" },
 ];
 
 const logoutMenu = [
@@ -42,18 +45,15 @@ const Navbar = () => {
 
   const handlePath = async (item) => {
     if (item.name === "Logout") {
-      await axios
-        .get("/api/auth/logout")
-        .then(() => {
-          dispatch(hamdleLogout());
-          navigate("/login");
-        })
-        .catch((err) => {
-          console.error("Logout failed:", err);
-        })
-        .finally(() => {
-          window.location.reload();
-        });
+      try {
+        await api.get("/api/auth/logout");
+        dispatch(hamdleLogout());
+        localStorage.removeItem("userType");
+        toast.success("Logout Success");
+        navigate("/");
+      } catch (err) {
+        console.error("Logout failed:", err);
+      }
       return;
     }
     navigate(item.path);
@@ -79,13 +79,15 @@ const Navbar = () => {
           </button>
         </div>
         {
-          <div className="text-white flex gap-2 md:gap-4 ">
+          <div className="text-white md:text-lg flex gap-2 md:gap-4 ">
             {menuItems.map((item, idx) => (
               <button
                 key={idx}
                 type="button"
                 className="hover:cursor-pointer hover:underline"
-                onClick={()=>{handlePath(item)}}
+                onClick={() => {
+                  handlePath(item);
+                }}
               >
                 {item.name}
               </button>

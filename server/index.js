@@ -41,6 +41,7 @@ app.use(limiter); // Apply rate limiting middleware
 app.use(cors(
     {
         origin: process.env.CORS_ORIGIN || '*',
+        credentials: true,
         methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     }

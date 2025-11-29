@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setLoginStatus, updateToken, updateUser } from "../slicers/AuthSlice";
-import axios from "axios";
+import api from "../axiosHelper";
+import { toast } from "react-toastify";
 
 import passIcon from "../assets/password.svg";
 
@@ -20,14 +21,16 @@ const SignUpForm = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (password !== confPassword) {
       setErrNotifier("Passwords do not match");
       return;
     }
-    axios
-      .post("http://localhost:5000/api/auth/signup", {
+    const tid = toast.loading("Loging...");
+    await api
+      .post("/api/auth/signup", {
         username,
         email,
         password,
@@ -39,10 +42,24 @@ const SignUpForm = ({
         dispatch(setLoginStatus(true));
         console.log("Sign Up successful:", response.data);
         // toast logic can be added here
+        toast.update(tid, {
+          render: "SignUp Success",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+          closeButton: null,
+        });
         navigate(redirectUrl);
       })
       .catch((error) => {
-        console.error("Sign Up failed:", error);
+        console.error("SignUp Failed:", error);
+        toast.update(tid, {
+          render: `Sign Up failed: ${error.response.data.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+          closeButton: null,
+        });
       });
   };
 
@@ -68,14 +85,14 @@ const SignUpForm = ({
     <>
       <div
         className="flex w-2/6  max-w-sm mx-auto my-10 flex-col p-6 items-center justify-center
-       border-2 border-gray-300/80 rounded-2xl shadow-lg/20"
+       border-2 border-gray-300/80 rounded-2xl shadow-lg/20 "
       >
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 w-full mx-auto mt-4"
+          className="flex flex-col gap-4 w-full mx-auto mt-4 "
         >
           <h2 className="text-3xl  text-center font-bold mb-4">
-            {title} Sign Up
+            {title} SignUp
           </h2>
           <div className="relative">
             <input
