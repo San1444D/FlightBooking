@@ -1,19 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const userType = useSelector((state) => state.auth.userType);
-  console.log(userType);
-
-  useEffect(() => {
-    if (userType === "admin") {
-      navigate("/admin");
-    } else if (userType === "flight-operator") {
-      navigate("/flight-admin");
-    }
-  }, []);
 
   return (
     <>

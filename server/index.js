@@ -53,15 +53,15 @@ app.use(cors(
 // --- Routes ---
 // Route files should live in `server/routes/` and export an Express Router instance.
 // Example: `server/routes/authRoutes.js` exports default router and is mounted below.
-import authRoute from './routes/authRoutes.js'
-// import customerRouters from './routes/customerRouters.js'
-// import flightRouters from './routes/flightRouters.js'
-// import adminRoutes from './routes/adminRoutes.js'
+import authRouteR from './routes/authRoutes.js'
+import adminRouteR from './routes/adminRoutes.js'
+import customerRouter from './routes/customerRouters.js'
+import flightRouter from './routes/filghtRouters.js';
 
-app.use('/api/auth', authRoute) // auth: signup, login, token refresh
-// app.use('/api/customers', customerRouters) // public or protected customer endpoints
-// app.use('/api/flights', flightRouters) // flight search, details, admin flight management
-// app.use('/api/admin', adminRoutes) // admin-only endpoints (protect with auth middleware)
+app.use('/api/auth', authRouteR) // auth: signup, login, token refresh
+app.use('/api/customer', customerRouter) // public or protected customer endpoints
+app.use('/api/flight', flightRouter) // flight search, details, admin flight management
+app.use('/api/admin', adminRouteR) // admin-only endpoints (protect with auth middleware)
 
 
 

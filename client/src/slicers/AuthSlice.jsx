@@ -18,20 +18,24 @@ export const authSlice = createSlice({
       state.token = action.payload;
       console.log("Token updated:", state.token);
     },
-    setLoginStatus: (state, action) => {
-      state.isLoginedIn = action.payload;
-      console.log("Login status updated:", state.isLoginedIn);
-    },
+
     updateUserType: (state, action) => {
       state.userType = action.payload;
       localStorage.setItem("userType", state.userType);
       console.log("User type updated:", state.userType);
     },
-    hamdleLogout: (state, action) => {
+    setLoginStatus: (state, action) => {
+      state.isLoginedIn = action.payload;
+      console.log("Login status updated:", state.isLoginedIn);
+    },
+
+    handleLogout: (state, action) => {
       localStorage.setItem("userType", null);
       state.user = null;
+      state.userType = null;
       state.token = null;
       state.isLoginedIn = false;
+
     },
   },
 });
@@ -41,6 +45,7 @@ export const {
   updateUserType,
   updateToken,
   setLoginStatus,
-  hamdleLogout,
+
+  handleLogout,
 } = authSlice.actions;
 export default authSlice.reducer;

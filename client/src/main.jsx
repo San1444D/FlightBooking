@@ -25,6 +25,7 @@ createRoot(document.getElementById("root")).render(
           draggable
           pauseOnHover
           closeButton={true}
+          limit={5}
         />
       </Provider>
     </BrowserRouter>

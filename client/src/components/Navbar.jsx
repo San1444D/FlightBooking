@@ -1,7 +1,7 @@
 import api from "../axiosHelper";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { hamdleLogout } from "../slicers/AuthSlice";
+import { handleLogout } from "../slicers/AuthSlice";
 import { toast } from "react-toastify";
 
 const customerMenu = [
@@ -46,8 +46,8 @@ const Navbar = () => {
   const handlePath = async (item) => {
     if (item.name === "Logout") {
       try {
-        await api.get("/api/auth/logout");
-        dispatch(hamdleLogout());
+        await api.get("/auth/logout");
+        dispatch(handleLogout());
         localStorage.removeItem("userType");
         toast.success("Logout Success");
         navigate("/");

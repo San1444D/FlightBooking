@@ -21,10 +21,11 @@ const COOKIE_OPTIONS = {
 
 const tokenGenerator = async (decoded, res, refreshToken = false) => {
     const payload = {
-        id: decoded.id,
+        _id: decoded._id,
         username: decoded.username,
         email: decoded.email,
         userType: decoded.userType,
+        approval: decoded.approval,
     };
     const newAccessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
 
@@ -42,11 +43,10 @@ const tokenGenerator = async (decoded, res, refreshToken = false) => {
 const loginController = async (req, res) => {
     const { email, password, userType } = req.body;
     const cacheKey = `user:${email}:${userType}`;
-    console.log(cacheKey)
 
     const userData = await getOrSetCache(cacheKey, async () => {
         return await User.findOne({ email, userType, isDeleted: false },
-            { email: 1, username: 1, password: 1, userType: 1 }).lean();;
+            { email: 1, username: 1, password: 1, userType: 1, approval: 1 });;
     });
 
     if (!userData) {
@@ -61,10 +61,10 @@ const loginController = async (req, res) => {
         }
 
         // Return shallow copy without password
-        const safeUserData = { ...userData };
-        delete safeUserData.password;
+
+        delete userData.password;
         const accessToken = await tokenGenerator(userData, res, true);
-        return res.status(200).json({ accessToken, userData: safeUserData });
+        return res.status(200).json({ accessToken, userData});
 
     }
 };
@@ -85,9 +85,11 @@ const signupController = async (req, res) => {
         username,
         email,
         password: hashedPassword,
+        userType
     });
     if (userType === 'operator' || userType === 'admin') {
-        newUser.isApproval = false;
+        newUser.approval = 'not-approved';
+        // newUser.userType = userType
     }
     await newUser.save();
     return res.status(201).json({ message: 'User created successfully' });
@@ -102,7 +104,7 @@ const getMe = async (req, res) => {
         const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
 
         const accessToken = await tokenGenerator(decoded, res);
-        console.log(decoded)
+        // console.log(decoded)
         return res.status(200).json({ accessToken, userData: decoded });
     } catch (err) {
         return res.status(403).json({ message: 'Invalid refresh token' });
@@ -144,6 +146,7 @@ const refreshTokenController = async (req, res) => {
 const logoutController = async (req, res) => {
     try {
         // Clear cookie using the same settings used when setting it
+        // console.log("jsjkjdk")
         res.clearCookie("refreshToken", COOKIE_OPTIONS);
         return res.status(200).json({ message: "Logout Success" });
     } catch (err) {

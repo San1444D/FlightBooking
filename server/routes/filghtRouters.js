@@ -1,10 +1,17 @@
 import { Router } from "express";
+import FlightController from "../controllers/flightController.js";
 
-const router = Router();
+const flightRouter = Router();
 
 
-router.get("/", (req, res) => {
+flightRouter.get("/", (req, res) => {
     res.send("Flight Routes");
 });
 
-export default router;
+flightRouter.post('/add-flight', FlightController.addFlight)
+flightRouter.put('/update-flight', FlightController.updateFlight)
+flightRouter.get('/fetch-flights', FlightController.fetchFlight)
+flightRouter.get('/fetch-flight/:id', FlightController.fetchFlightById)
+flightRouter.get('/fetch-bookings', FlightController.fetchBookings)
+
+export default flightRouter;

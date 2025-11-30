@@ -19,9 +19,10 @@ const userSchema = new Schema({
         enum: ['admin', 'customer', 'operator'],
         default: 'customer',
     },
-    isApproval: {
-        type: Boolean,
-        default: true,
+    approval: {
+        type: String,
+        enum: ['approved', 'not-approved', 'rejected'],
+        default: 'approved',
     },
     createdAt: {
         type: Date,
@@ -41,7 +42,7 @@ const userSchema = new Schema({
     timestamps: true, versionKey: false,
 });
 
-userSchema.index({ email: 1,  isDeleted: -1 }); // Compound index for efficient queries
+userSchema.index({ email: 1, isDeleted: -1 }); // Compound index for efficient queries
 const User = model("User", userSchema);
 
 export default User;

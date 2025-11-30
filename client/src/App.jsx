@@ -7,6 +7,17 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
 
+import AdminDash from "./pages/admin/AdminDashboard";
+import FlightAdmin from "./pages/operator/FlightAdmin";
+import AllBookings from "./pages/AllBookings";
+import AllFlights from "./pages/AllFlights";
+import AllUsers from "./pages/AllUsers";
+import Bookings from "./pages/customer/Bookings";
+import FlightBookings from "./pages/operator/FlightBookings";
+import Flights from "./pages/operator/Flights";
+import NewFlight from "./pages/operator/NewFlight";
+import EditFlight from "./pages/operator/EditFlight";
+
 import LoginForm from "./components/LoginForm";
 import SignUpForm from "./components/SignUpForm";
 import NotFound from "./pages/NotFound";
@@ -28,7 +39,7 @@ function App() {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await api.get("/api/auth/get-me");
+        const response = await api.get("/auth/get-me");
         dispatch(updateToken(response.data.accessToken));
         console.log("fetchToken home");
         dispatch(updateUser(response.data.userData));
@@ -41,13 +52,13 @@ function App() {
       }
     };
 
-    if (userType === "admin") {
-      navigate("/admin");
-    } else if (userType === "flight-operator") {
-      navigate("/flight-admin");
-    }
     if (userType != null) {
       fetchToken();
+    }
+    if (userType === "admin") {
+      navigate("/admin");
+    } else if (userType === "operator") {
+      navigate("/flight-admin");
     }
   }, []);
 
@@ -67,38 +78,66 @@ function App() {
           />
           <Route
             path="/Alogin"
-            element={<LoginForm title={"Admin"} userType={"admin"} />}
+            element={
+              <LoginForm
+                title={"Admin"}
+                userType={"admin"}
+                redirectUrl="/admin"
+              />
+            }
           />
           <Route
             path="/Asignup"
-            element={<SignUpForm title={"Admin"} userType={"admin"} />}
+            element={
+              <SignUpForm
+                title={"Admin"}
+                userType={"admin"}
+                redirectUrl="/Alogin"
+              />
+            }
           />
           <Route
             path="/Ologin"
             element={
-              <LoginForm title={"Flight Operator"} userType={"operator"} />
+              <LoginForm
+                title={"Flight Operator"}
+                userType={"operator"}
+                redirectUrl="/flight-admin"
+              />
             }
           />
           <Route
             path="/Osignup"
             element={
-              <SignUpForm title={"Flight Operator"} userType={"operator"} />
+              <SignUpForm
+                title={"Flight Operator"}
+                userType={"operator"}
+                redirectUrl="/Ologin"
+              />
             }
           />
         </Route>
+        <Route element={<AuthProvider />}>
+          <Route path="/all-bookings" element={<AllBookings />} />
+          <Route path="/bookings" element={<Bookings />} />
 
-        <Route element={<IsAuthorized givenUserType={"admin"} />}>
-          <Route
-            path="/admin"
-            element={<div className="h-dvh">Admin Dash Page</div>}
-          />
-        </Route>
+          <Route element={<IsAuthorized givenUserType={"admin"} />}>
+            <Route path="/admin" element={<AdminDash />} />
+          </Route>
 
-        <Route element={<IsAuthorized givenUserType={"operator"} />}>
+          <Route element={<IsAuthorized givenUserType={"operator"} />}>
+            <Route path="/flight-admin" element={<FlightAdmin />} />
+          </Route>
           <Route
-            path="/flight-admin"
-            element={<div className="h-dvh">Operator Page</div>}
-          />
+            element={<IsAuthorized givenUserType={["operator", "admin"]} />}
+          >
+            <Route path="/all-flights" element={<AllFlights />} />
+            <Route path="/all-users" element={<AllUsers />} />
+            <Route path="/flight-bookings" element={<FlightBookings />} />
+            <Route path="/flights" element={<Flights />} />
+            <Route path="/new-flight" element={<NewFlight />} />
+            <Route path="/edit-flight/:id" element={<EditFlight />} />
+          </Route>
         </Route>
 
         {/* Handle page not fount */}

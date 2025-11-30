@@ -2,10 +2,9 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-
-
 const IsAuthorized = ({ givenUserType }) => {
   const userType = useSelector((state) => state.auth.userType);
+  // const isLoginedIn = useSelector((state) => state.auth.isLoginedIn);
   const navigate = useNavigate();
 
   // Normalize allowed types to array
@@ -14,9 +13,11 @@ const IsAuthorized = ({ givenUserType }) => {
     : [givenUserType];
 
   // Not the right role -> redirect immediately
-  if (!allowed.includes(userType)) {
+  if (!allowed.includes(userType) && userType) {
     // alert("Access Denied")
-    toast.warn("🦄 Wow so easy!");
+    toast.warn("Access Denied!", {
+      toastId: "customId",
+    });
     setTimeout(() => {
       navigate("/");
     }, 400);
