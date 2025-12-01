@@ -6,6 +6,8 @@ export const authSlice = createSlice({
     user: null,
     token: null,
     isLoginedIn: false,
+    initialized: false,
+    ticketBookingDate: null,
     userType: localStorage.getItem("userType") || null,
   },
   reducers: {
@@ -28,14 +30,18 @@ export const authSlice = createSlice({
       state.isLoginedIn = action.payload;
       console.log("Login status updated:", state.isLoginedIn);
     },
-
+    setInitialized:(state, action)=>{
+      state.initialized = action.payload;
+    },
     handleLogout: (state, action) => {
       localStorage.setItem("userType", null);
       state.user = null;
       state.userType = null;
       state.token = null;
       state.isLoginedIn = false;
-
+    },
+    setTicketBookingDate: (state, action) => {
+      state.ticketBookingDate = action.payload;
     },
   },
 });
@@ -45,7 +51,8 @@ export const {
   updateUserType,
   updateToken,
   setLoginStatus,
-
+  setInitialized,
+  setTicketBookingDate,
   handleLogout,
 } = authSlice.actions;
 export default authSlice.reducer;

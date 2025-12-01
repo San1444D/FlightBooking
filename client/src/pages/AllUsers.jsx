@@ -5,8 +5,13 @@ const AllUsers = () => {
   const [users, setUsers] = useState([]);
 
   const fetchUsers = async () => {
-    await api.get("/admin/fetch-users").then((response) => {
+    await api.get("/admin/fetch-users")
+    .then((response) => {
+      // console.log(response.data)
       setUsers(response.data);
+    })
+    .catch((err)=>{
+      console.log("fetech users error: ",err)
     });
   };
 
@@ -20,7 +25,7 @@ const AllUsers = () => {
         <h2>All Users</h2>
         <div className="all-users">
           {users
-            .filter((user) => user.usertype === "customer")
+            .filter((user) => user.userType === "customer")
             .map((user) => {
               return (
                 <div className="user" key={user._id}>
@@ -44,7 +49,7 @@ const AllUsers = () => {
         <h2>Flight Operators</h2>
         <div className="all-users">
           {users
-            .filter((user) => user.usertype === "operator")
+            .filter((user) => user.userType === "operator")
             .map((user) => {
               return (
                 <div className="user" key={user._id}>

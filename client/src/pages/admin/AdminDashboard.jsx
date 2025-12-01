@@ -65,7 +65,7 @@ const AdminDash = () => {
             <p> {userCount} </p>
             <button
               className="btn btn-primary"
-              onClick={() => navigate("/all-users")}
+              onClick={() => navigate("/admin/all-users")}
             >
               View all
             </button>

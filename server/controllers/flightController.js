@@ -1,5 +1,6 @@
 import Flight from "../models/filghtSchema.js";
 import Booking from "../models/bookingSchema.js"
+import { getOrSetCache } from "../middlewares/redisHelper.js";
 
 const addFlight = async (req, res) => {
     const { flightName, flightId, origin, destination, departureTime,
@@ -71,8 +72,31 @@ const fetchFlightById = async (req, res) => {
 const fetchBookings = async (req, res) => {
 
     try {
-        const bookings = await Booking.find();
-        res.json(bookings);
+        const userId = req.user?._id || req.user?.id;
+        const userType = req.user.userType;
+        const cacheId = `bookings_${userType}_${userId}`;
+        let bookings = [];
+        if (userType === 'admin') {
+            bookings = await getOrSetCache(cacheId, async () => {
+                return await Booking.find({});
+            }, 30) // Cache for 60 seconds;
+        } else if (userType === 'operator') {
+            bookings = await getOrSetCache(cacheId, async () => {
+                return await Booking.find({ flightName: req.user.username });
+            }, 30) // Cache for 60 seconds;
+        } else if (userType === 'customer') {
+            bookings = await getOrSetCache(cacheId, async () => {
+                return await Booking.find({ user: userId });
+            }, 30) // Cache for 60 seconds;
+        } 
+        // else {
+        //     bookings = await getOrSetCache(cacheId, async () => {
+        //         return await Booking.find({});
+        //     }, 30); // Cache for 60 seconds;
+        // }
+
+        console.log('Bookings : ', bookings.length);
+        return res.json(bookings);
 
     } catch (err) {
         console.log(err);

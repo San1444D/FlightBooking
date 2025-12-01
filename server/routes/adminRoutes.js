@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { isAdmin } from "../middlewares/authMiddleware.js";
+import { isAdmin, verifyToken } from "../middlewares/authMiddleware.js";
 
 const adminRouter = Router();
 
+// adminRouter.use(verifyToken)
 // adminRouter.use(isAdmin)
 
 adminRouter.get("/", (req, res) => {

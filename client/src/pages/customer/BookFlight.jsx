@@ -1,14 +1,11 @@
-// need to modify
-
-import{ useContext, useEffect, useState } from "react";
-
-import { GeneralContext } from "../context/GeneralContext";
+import { useEffect, useState } from "react";
 import api from "../../axiosHelper";
 import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const BookFlight = () => {
   const { id } = useParams();
-
+  const userData = useSelector((state) => state.auth.user);
   const [flightName, setFlightName] = useState("");
   const [flightId, setFlightId] = useState("");
   const [basePrice, setBasePrice] = useState(0);
@@ -16,26 +13,12 @@ const BookFlight = () => {
   const [destinationCity, setDestinationCity] = useState("");
   const [startTime, setStartTime] = useState();
 
-  const fetchFlightData = async () => {
-    await api
-      .get(`/flight/fetch-flight/${id}`)
-      .then((response) => {
-        setFlightName(response.data.flightName);
-        setFlightId(response.data.flightId);
-        setBasePrice(response.data.basePrice);
-        setStartCity(response.data.origin);
-        setDestinationCity(response.data.destination);
-        setStartTime(response.data.departureTime);
-      });
-  };
-  useEffect(() => {
-    fetchFlightData();
-  }, []);
-
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [coachType, setCoachType] = useState("");
-  const { ticketBookingDate } = useContext(GeneralContext);
+  const ticketBookingDate = useSelector(
+    (state) => state.auth.ticketBookingDate
+  );
   const [journeyDate, setJourneyDate] = useState(ticketBookingDate);
 
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
@@ -48,6 +31,30 @@ const BookFlight = () => {
     business: 3,
     "first-class": 4,
   };
+
+  const fetchFlightData = async () => {
+    await api.get(`/flight/fetch-flight/${id}`).then((response) => {
+      setFlightName(response.data.flightName);
+      setFlightId(response.data.flightId);
+      setBasePrice(Number(response.data.basePrice) || 0); // ensure numeric basePrice
+      setStartCity(response.data.origin);
+      setDestinationCity(response.data.destination);
+      setStartTime(response.data.departureTime);
+    });
+  };
+  // keep passenger details array in sync with numberOfPassengers
+  useEffect(() => {
+    const num = Number(numberOfPassengers) || 0;
+    setPassengerDetails((prev) => {
+      const next = prev.slice(0, num);
+      while (next.length < num) next.push({ name: "", age: "" });
+      return next;
+    });
+  }, [numberOfPassengers]);
+
+  useEffect(() => {
+    fetchFlightData();
+  }, []);
 
   const handlePassengerChange = (event) => {
     const value = parseInt(event.target.value);
@@ -63,16 +70,17 @@ const BookFlight = () => {
   };
 
   useEffect(() => {
-    if (price[coachType] * basePrice * numberOfPassengers) {
-      setTotalPrice(price[coachType] * basePrice * numberOfPassengers);
-    }
-  }, [numberOfPassengers, coachType]);
-
+    // compute factor safely and avoid NaN
+    const factor = price[coachType] ?? 0;
+    const num = Number(numberOfPassengers) || 0;
+    const total = factor * basePrice * num;
+    setTotalPrice(total);
+  }, [numberOfPassengers, coachType, basePrice]);
   const navigate = useNavigate();
 
   const bookFlight = async () => {
     const inputs = {
-      user: localStorage.getItem("userId"),
+      user: userData?._id || userData?.id,
       flight: id,
       flightName,
       flightId,
@@ -95,6 +103,7 @@ const BookFlight = () => {
       })
       .catch((err) => {
         alert("Booking failed!!");
+        console.log("Booking failed",err)
       });
   };
 
@@ -196,7 +205,7 @@ const BookFlight = () => {
                       handlePassengerDetailsChange(
                         index,
                         "name",
-                        event.target.value
+                        event.target.value || ""
                       )
                     }
                   />
@@ -212,7 +221,7 @@ const BookFlight = () => {
                       handlePassengerDetailsChange(
                         index,
                         "age",
-                        event.target.value
+                        Number(event.target.value) || ""
                       )
                     }
                   />

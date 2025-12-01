@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken';
 
 const verifyToken = (req, res, next) => {
     try {
-        const authHeader = req.headers['Authorization'];
+        const authHeader = req.headers['authorization'];
+        // console.log('Auth header : ', authHeader);
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             new Error('Authorization header missing or malformed');
@@ -15,6 +16,7 @@ const verifyToken = (req, res, next) => {
     }
     catch (err) {
         return res.status(403).json({ message: "Unauthorized" });
+        console.error('Token verification error : ', err);
     }
 };
 

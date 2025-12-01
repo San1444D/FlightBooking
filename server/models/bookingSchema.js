@@ -28,7 +28,7 @@ const bookingSchema = new Schema({
     journeyTime: { type: String },
     seatClass: {
         type: String,
-        enum: ['economy', 'business', 'first'],
+        enum: ['economy', 'premium-economy', 'business', 'first-class'],
     },
     bookingStatus: {
         type: String,

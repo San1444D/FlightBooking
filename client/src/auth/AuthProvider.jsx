@@ -13,6 +13,7 @@ const AuthProvider = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const initialized = useSelector((state) => state.auth.initialized);
   const logoutInProgressRef = useRef(false);
 
   // Avoid unconditional navigation loops — only navigate when user is on protected path
@@ -24,13 +25,14 @@ const AuthProvider = () => {
       // Protect against repeated navigation calls
       if (!logoutInProgressRef.current) {
         logoutInProgressRef.current = true;
-        navigate("/login", { replace: true });
+        if (!localStorage.getItem("userType"))
+          navigate("/login", { replace: true });
       }
     } else {
       // reset flag when token exists or we're at allowed paths
       logoutInProgressRef.current = false;
     }
-  }, [token, location.pathname, navigate]);
+  }, [token, initialized, location.pathname, navigate]);
 
   // Attach request interceptor: MUST return config
   useEffect(() => {

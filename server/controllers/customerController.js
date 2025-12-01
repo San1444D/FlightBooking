@@ -1,7 +1,7 @@
 import Booking from '../models/bookingSchema.js';
 
 const bookTicket = async (req, res) => {
-    const user = req.user.id; // Get from JWT payload
+    const user = req.user?._id || req.user?.id; // Get from JWT payload
 
     const { flight, flightName, flightId, departure, destination,
         email, mobile, passengers, totalPrice, journeyDate, journeyTime, seatClass } = req.body;

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import api from "./axiosHelper";
 import "./App.css";
+import { setInitialized } from "./slicers/AuthSlice";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -12,11 +13,13 @@ import FlightAdmin from "./pages/operator/FlightAdmin";
 import AllBookings from "./pages/AllBookings";
 import AllFlights from "./pages/AllFlights";
 import AllUsers from "./pages/AllUsers";
+import BookFlight from "./pages/customer/BookFlight";
 import Bookings from "./pages/customer/Bookings";
 import FlightBookings from "./pages/operator/FlightBookings";
 import Flights from "./pages/operator/Flights";
 import NewFlight from "./pages/operator/NewFlight";
 import EditFlight from "./pages/operator/EditFlight";
+import LandingPage from "./pages/LandingPage";
 
 import LoginForm from "./components/LoginForm";
 import SignUpForm from "./components/SignUpForm";
@@ -37,6 +40,7 @@ function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
+    let mounted = true;
     const fetchToken = async () => {
       try {
         const response = await api.get("/auth/get-me");
@@ -49,6 +53,8 @@ function App() {
         dispatch(updateToken(null));
         dispatch(setLoginStatus(false));
         localStorage.removeItem("userType");
+      } finally{
+        if (mounted) dispatch(setInitialized(true));
       }
     };
 
@@ -120,6 +126,9 @@ function App() {
         <Route element={<AuthProvider />}>
           <Route path="/all-bookings" element={<AllBookings />} />
           <Route path="/bookings" element={<Bookings />} />
+          <Route path="/book-Flight/:id" element={<BookFlight />} />
+
+          <Route path="/search" element={<LandingPage />} />
 
           <Route element={<IsAuthorized givenUserType={"admin"} />}>
             <Route path="/admin" element={<AdminDash />} />
@@ -132,7 +141,7 @@ function App() {
             element={<IsAuthorized givenUserType={["operator", "admin"]} />}
           >
             <Route path="/all-flights" element={<AllFlights />} />
-            <Route path="/all-users" element={<AllUsers />} />
+            <Route path="/admin/all-users" element={<AllUsers />} />
             <Route path="/flight-bookings" element={<FlightBookings />} />
             <Route path="/flights" element={<Flights />} />
             <Route path="/new-flight" element={<NewFlight />} />

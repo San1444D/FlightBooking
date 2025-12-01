@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 
 import api from "../../axiosHelper";
+import { useSelector } from "react-redux";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
-
-  const userId = localStorage.getItem("userId");
-
+ const userData = useSelector((state)=>state.auth.user)
+  const userId = userData?._id || userData?.id
+ 
   const fetchBookings = async () => {
     await api.get("/flight/fetch-bookings").then((response) => {
       setBookings(response.data.reverse());
+    }).catch((err)=>{
+      console.log("fetchbooking error : ", err)
     });
   };
   useEffect(() => {
