@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import api from "../axiosHelper";
+import api from "../../axiosHelper";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -35,7 +35,7 @@ const AllBookings = () => {
         {bookings.map((booking) => {
           return (
             <div
-              className="border max-w-200 p-4 gap-2 rounded-md  bg-white shadow-2xl text-blue-500"
+              className="border-2 border-black/20 max-w-200 p-4 gap-2 rounded-xl  bg-white shadow-2xl text-blue-500"
               key={booking._id}
             >
               <p>

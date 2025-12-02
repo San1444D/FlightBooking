@@ -56,8 +56,8 @@ const FlightAdmin = () => {
   }, [userData]);
 
   return (
-    <div className="flightAdmin-page">
-      <h1>Flight admin</h1>
+    <div className="page">
+      <h1 className="text-blue-600">Flight admin</h1>
       {userData ? (
         <>
           {userData.approval === "not-approved" ? (
@@ -77,34 +77,31 @@ const FlightAdmin = () => {
               </p>
             </div>
           ) : userData.approval === "approved" ? (
-            <div className="admin-page-cards">
-              <div className="card admin-card transactions-card">
-                <h4>Bookings</h4>
+            <div className="flex justify-around gap-4 text-center my-10">
+              <div className="bg-white w-2/10 min-w-50  p-4 inline-flex flex-col gap-2 justify-around shadow-2xl rounded-md">
+                <h4 className="text-xl font-semibold">Bookings</h4>
                 <p> {bookingCount} </p>
                 <button
-                  className="btn btn-primary"
+                  className="btn"
                   onClick={() => navigate("/flight-bookings")}
                 >
                   View all
                 </button>
               </div>
 
-              <div className="card admin-card deposits-card">
-                <h4>Flights</h4>
+              <div className="bg-white w-2/10 min-w-50  p-4 inline-flex flex-col gap-2 justify-around shadow-2xl rounded-md">
+                <h4 className="text-xl font-semibold">Flights</h4>
                 <p> {flightsCount} </p>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => navigate("/flights")}
-                >
+                <button className="btn " onClick={() => navigate("/flights")}>
                   View all
                 </button>
               </div>
 
-              <div className="card admin-card loans-card">
-                <h4>New Flight</h4>
+              <div className="bg-white w-2/10 min-w-50  p-4 inline-flex flex-col gap-2 justify-around shadow-2xl rounded-md">
+                <h4 className="text-xl font-semibold">New Flight</h4>
                 <p> (new route) </p>
                 <button
-                  className="btn btn-primary"
+                  className="btn "
                   onClick={() => navigate("/new-flight")}
                 >
                   Add now

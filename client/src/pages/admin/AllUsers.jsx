@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../axiosHelper";
+import api from "../../axiosHelper";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);

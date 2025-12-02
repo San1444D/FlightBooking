@@ -16,11 +16,13 @@
   body {
     @apply min-h-[83.5vh];
   }
-  h1{@apply text-3xl}
 
-  .Flight{
+  h1 {
+    @apply text-3xl font-semibold
+  }
+
+  .Flight {
     @apply p-4 m-4 grid grid-cols-5 bg-white/20 rounded-2xl border-2 border-black/10 backdrop-blur-2xl shadow-2xs
-
   }
 
   .page {
@@ -50,5 +52,13 @@
 
 
     }
+  }
+
+  .notApproved-box {
+    @apply mt-20 text-center text-wrap
+  }
+
+  .notApproved-box>h3 {
+    @apply mb-10 text-3xl font-bold
   }
 }

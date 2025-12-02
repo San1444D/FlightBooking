@@ -41,7 +41,7 @@ const Flights = () => {
   }, []);
 
   return (
-    <div className="allFlightsPage">
+    <div className="page">
       {userData ? (
         <>
           {userData.approval === "not-approved" ? (
@@ -54,16 +54,21 @@ const Flights = () => {
             </div>
           ) : userData.approval === "approved" ? (
             <>
-              <h1>All Flights</h1>
+              <h1 className="text-2xl font-semibold text-blue-600">
+                All Flights
+              </h1>
 
-              <div className="allFlights">
+              <div className="m-2 p-2 grid grid-cols-2 gap-4 items-center">
                 {flights
                   .filter((flight) => flight.flightName === userData?.username)
                   .map((Flight) => {
                     return (
-                      <div className="allFlights-Flight" key={Flight._id}>
+                      <div
+                        className="relative shadow-2xs bg-white  border border-black/20  rounded-md p-4 px-8 mx-auto min-w-120"
+                        key={Flight._id}
+                      >
                         <p>
-                          <b>_id:</b> {Flight._id}
+                          <b>id:</b> {Flight._id}
                         </p>
                         <span>
                           <p>
@@ -97,9 +102,9 @@ const Flights = () => {
                             <b>Total seats:</b> {Flight.totalSeats}
                           </p>
                         </span>
-                        <div>
+                        <div className="absolute bottom-2 right-2">
                           <button
-                            className="btn btn-primary"
+                            className="btn"
                             onClick={() =>
                               navigate(`/edit-flight/${Flight._id}`)
                             }

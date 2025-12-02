@@ -10,9 +10,9 @@ import HomePage from "./pages/HomePage";
 
 import AdminDash from "./pages/admin/AdminDashboard";
 import FlightAdmin from "./pages/operator/FlightAdmin";
-import AllBookings from "./pages/AllBookings";
-import AllFlights from "./pages/AllFlights";
-import AllUsers from "./pages/AllUsers";
+import AllBookings from "./pages/admin/AllBookings";
+import AllFlights from "./pages/admin/AllFlights";
+import AllUsers from "./pages/admin/AllUsers";
 import BookFlight from "./pages/customer/BookFlight";
 import Bookings from "./pages/customer/Bookings";
 import FlightBookings from "./pages/operator/FlightBookings";

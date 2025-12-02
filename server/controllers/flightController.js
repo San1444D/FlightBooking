@@ -49,7 +49,7 @@ const fetchFlight = async (req, res) => {
 
     try {
         const cacheId = `flights_all`;
-        const flights = getOrSetCache(cacheId, async () => { return await Flight.find(); }, 30)
+        const flights = await getOrSetCache(cacheId, async () => { return await Flight.find(); }, 30)
         res.json(flights);
     } catch (err) {
         console.log(err);
