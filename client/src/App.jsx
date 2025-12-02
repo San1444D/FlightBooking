@@ -19,7 +19,7 @@ import FlightBookings from "./pages/operator/FlightBookings";
 import Flights from "./pages/operator/Flights";
 import NewFlight from "./pages/operator/NewFlight";
 import EditFlight from "./pages/operator/EditFlight";
-import LandingPage from "./pages/LandingPage";
+import SearchPage from "./pages/SearchPage";
 
 import LoginForm from "./components/LoginForm";
 import SignUpForm from "./components/SignUpForm";
@@ -53,8 +53,10 @@ function App() {
         dispatch(updateToken(null));
         dispatch(setLoginStatus(false));
         localStorage.removeItem("userType");
-      } finally{
-        if (mounted) dispatch(setInitialized(true));
+      } finally {
+        if (mounted) {
+          dispatch(setInitialized(true));
+        }
       }
     };
 
@@ -124,25 +126,24 @@ function App() {
           />
         </Route>
         <Route element={<AuthProvider />}>
-          <Route path="/all-bookings" element={<AllBookings />} />
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/book-Flight/:id" element={<BookFlight />} />
-
-          <Route path="/search" element={<LandingPage />} />
+          <Route path="/search" element={<SearchPage />} />
 
           <Route element={<IsAuthorized givenUserType={"admin"} />}>
             <Route path="/admin" element={<AdminDash />} />
+            <Route path="/all-bookings" element={<AllBookings />} />
+            <Route path="/admin/all-users" element={<AllUsers />} />
+            <Route path="/all-flights" element={<AllFlights />} />
           </Route>
 
           <Route element={<IsAuthorized givenUserType={"operator"} />}>
             <Route path="/flight-admin" element={<FlightAdmin />} />
+            <Route path="/flight-bookings" element={<FlightBookings />} />
           </Route>
           <Route
             element={<IsAuthorized givenUserType={["operator", "admin"]} />}
           >
-            <Route path="/all-flights" element={<AllFlights />} />
-            <Route path="/admin/all-users" element={<AllUsers />} />
-            <Route path="/flight-bookings" element={<FlightBookings />} />
             <Route path="/flights" element={<Flights />} />
             <Route path="/new-flight" element={<NewFlight />} />
             <Route path="/edit-flight/:id" element={<EditFlight />} />

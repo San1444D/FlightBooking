@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../axiosHelper";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const EditFlight = () => {
   const [flightName, setFlightName] = useState("");
@@ -67,7 +68,7 @@ const EditFlight = () => {
     await api
       .put("/flight/update-flight", inputs)
       .then(async (response) => {
-        alert("Flight updated successfully!!");
+        toast.success("Flight updated successfully!!");
         setFlightName("");
         setFlightId("");
         setOrigin("");

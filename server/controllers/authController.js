@@ -47,7 +47,7 @@ const loginController = async (req, res) => {
     const userData = await getOrSetCache(cacheKey, async () => {
         return await User.findOne({ email, userType, isDeleted: false },
             { email: 1, username: 1, password: 1, userType: 1, approval: 1 });;
-    });
+    },30);
 
     if (!userData) {
         return res.status(404).json({ message: 'User not found' });
@@ -75,7 +75,7 @@ const signupController = async (req, res) => {
     const existingUser = await getOrSetCache(cachesKey, async () => {
         return await User.findOne({ email, userType, isDeleted: false });
     },
-        10 * 60
+        120
     );
     if (existingUser) {
         return res.status(409).json({ message: 'User already exists' });

@@ -18,15 +18,15 @@ const AllFlights = () => {
   }, []);
 
   return (
-    <div className="allFlightsPage">
-      <h1>All Flights</h1>
+    <div className="page">
+      <h1 className="text-2xl font-semibold text-blue-600">All Flights</h1>
 
-      <div className="allFlights">
+      <div className="m-2 p-2 grid grid-cols-2 gap-4 items-center ">
         {flights.map((Flight) => {
           return (
-            <div className="allFlights-Flight" key={Flight._id}>
+            <div className="shadow-2xs bg-white  border border-black/20  rounded-md p-4 px-8 mx-auto min-w-120 " key={Flight._id}>
               <p>
-                <b>_id:</b> {Flight._id}
+                <b>id:</b> {Flight._id}
               </p>
               <span>
                 <p>

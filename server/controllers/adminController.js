@@ -61,7 +61,7 @@ const fetchAllUsers = async (req, res) => {
                 .skip(page * limit)
                 .limit(limit)
                 .lean();
-        }, 60); // cache for 60 seconds
+        }, 30); // cache for 60 seconds
 
         return res.json(users);
     } catch (err) {

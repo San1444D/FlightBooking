@@ -16,9 +16,27 @@
   body {
     @apply min-h-[83.5vh];
   }
+  h1{@apply text-3xl}
+
+  .Flight{
+    @apply p-4 m-4 grid grid-cols-5 bg-white/20 rounded-2xl border-2 border-black/10 backdrop-blur-2xl shadow-2xs
+
+  }
+
+  .page {
+    @apply min-h-screen bg-neutral-100 p-6
+  }
 
   .navbar {
     @apply bg-blue-600 text-white flex justify-between items-center w-full h-16 rounded-b-2xl sticky top-0 z-10 px-4;
+  }
+
+  .btn {
+    @apply bg-blue-500 px-4 py-2 rounded-lg text-white transition duration-100 hover:scale-105 hover:bg-blue-600 active:scale-95
+  }
+
+  .user {
+    @apply p-4 flex flex-col gap-1 border-2 border-black/10 rounded-md shadow-2xs bg-white
   }
 
   .home-page {

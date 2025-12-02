@@ -4,7 +4,7 @@ import api from "../axiosHelper";
 import { useDispatch, useSelector } from "react-redux";
 import { setTicketBookingDate } from "../slicers/AuthSlice";
 
-const LandingPage = () => {
+const SearchPage = () => {
   const [error, setError] = useState("");
   const [checkBox, setCheckBox] = useState(false);
   const [departure, setDeparture] = useState("");
@@ -75,45 +75,42 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="landingPage">
-      <div className="landingHero">
-        <div className="landingHero-title">
-          <h1 className="banner-h1">
+    <div className="home-page ">
+      <div className="flex flex-col gap-4">
+        <div className="mt-10 px-10">
+          <h1 className="">
             Embark on an Extraordinary Flight Booking Adventure!
           </h1>
-          <p className="banner-p">
+          <p className="text-lg">
             Unleash your travel desires and book extraordinary Flight journeys
             that will transport you to unforgettable destinations, igniting a
             sense of adventure like never before.
           </p>
         </div>
 
-        <div className="Flight-search-container input-container mb-4">
+        <div className="mx-2 p-4  bg-white/10 backdrop-blur-2xl rounded-2xl border-4 border-white/20 mb-4">
           {/* <h3>Journey details</h3> */}
-          <div className="form-check form-switch">
+          <div className="mb-2 text-lg  ">
             <input
-              className="form-check-input"
+              className="accent-blue-500 rounded-2xl "
               type="checkbox"
               id="flexSwitchCheckDefault"
               value=""
               onChange={(e) => setCheckBox(e.target.checked)}
             />
-            <label
-              className="form-check-label"
-              htmlFor="flexSwitchCheckDefault"
-            >
+            <label className="mx-2 top-0" htmlFor="flexSwitchCheckDefault">
               Return journey
             </label>
           </div>
-          <div className="Flight-search-container-body">
-            <div className="form-floating">
+          <div className="flex gap-2 items-center text-lg ">
+            <div className=" relative">
               <select
-                className="form-select form-select-sm mb-3"
+                className="bg-white  rounded-lg p-4 mr-4 pt-6 "
                 aria-label=".form-select-sm example"
                 value={departure}
                 onChange={(e) => setDeparture(e.target.value)}
               >
-                <option value=""  disabled>
+                <option value="" disabled>
                   Select
                 </option>
                 <option value="Chennai">Chennai</option>
@@ -129,16 +126,18 @@ const LandingPage = () => {
                 <option value="varanasi">varanasi</option>
                 <option value="Jaipur">Jaipur</option>
               </select>
-              <label htmlFor="floatingSelect">Departure City</label>
+              <label htmlFor="floatingSelect " className="absolute top-0 text-sm left-2">
+                Departure City
+              </label>
             </div>
-            <div className="form-floating">
+            <div className="relative ">
               <select
-                className="form-select form-select-sm mb-3"
+                className="bg-white rounded-lg p-4 mr-4 pt-6"
                 aria-label=".form-select-sm example"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
               >
-                <option value=""  disabled>
+                <option value="" disabled>
                   Select
                 </option>
                 <option value="Chennai">Chennai</option>
@@ -154,34 +153,34 @@ const LandingPage = () => {
                 <option value="varanasi">varanasi</option>
                 <option value="Jaipur">Jaipur</option>
               </select>
-              <label htmlFor="floatingSelect">Destination City</label>
+              <label htmlFor="floatingSelect" className="absolute top-0 text-sm left-2" >Destination City</label>
             </div>
-            <div className="form-floating mb-3">
+            <div className="relative ">
               <input
                 type="date"
-                className="form-control"
+                className="bg-white rounded-lg p-4 mr-4 pt-6"
                 id="floatingInputstartDate"
                 value={departureDate}
                 onChange={(e) => setDepartureDate(e.target.value)}
               />
-              <label htmlFor="floatingInputstartDate">Journey date</label>
+              <label htmlFor="floatingInputstartDate" className="absolute top-0 text-sm left-2">Journey date</label>
             </div>
             {checkBox ? (
-              <div className="form-floating mb-3">
+              <div className="relative">
                 <input
                   type="date"
-                  className="form-control"
+                  className="bg-white rounded-lg p-4 mr-4 pt-6"
                   id="floatingInputreturnDate"
                   value={returnDate}
                   onChange={(e) => setReturnDate(e.target.value)}
                 />
-                <label htmlFor="floatingInputreturnDate">Return date</label>
+                <label htmlFor="floatingInputreturnDate" className="absolute top-0 text-sm left-2">Return date</label>
               </div>
             ) : (
               ""
             )}
             <div>
-              <button className="btn btn-primary" onClick={fetchFlights}>
+              <button className="btn ml-10" onClick={fetchFlights}>
                 Search
               </button>
             </div>
@@ -197,8 +196,8 @@ const LandingPage = () => {
                 Flight.destination === destination
             ).length > 0 ? (
               <>
-                <div className="availableFlightsContainer">
-                  <h1>Available Flights</h1>
+                <div className="p-2  ">
+                  <h1 className="text-black">Available Flights</h1>
 
                   <div className="Flights">
                     {checkBox ? (
@@ -376,4 +375,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default SearchPage;

@@ -1,6 +1,7 @@
 import api from "../../axiosHelper";
 import  { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const FlightBookings = () => {
   const userData = useSelector((state) => state.auth.user);
@@ -18,7 +19,7 @@ const FlightBookings = () => {
 
   const cancelTicket = async (id) => {
     await api.put(`/customer/cancel-ticket/${id}`).then((response) => {
-      alert("Ticket cancelled!!");
+      toast.success("Ticket cancelled!!");
       fetchBookings();
     });
   };

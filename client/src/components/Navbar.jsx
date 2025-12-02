@@ -6,22 +6,25 @@ import { toast } from "react-toastify";
 
 const customerMenu = [
   { name: "Home", path: "/" },
+  { name: "Search", path: "/search" },
   { name: "Bookings", path: "/bookings" },
-  { name: "Profile", path: "/profile" },
+  // { name: "Profile", path: "/profile" },
   { name: "Logout", path: "/" },
 ];
 
 const adminMenu = [
   { name: "Dashboard", path: "/admin" },
-  { name: "Manage Flights", path: "/admin/flights" },
-  { name: "Users", path: "/admin/users" },
-   { name: "Logout", path: "/" },
+  { name: "Users", path: "/admin/all-users" },
+  { name: "All Bookings", path: "/all-bookings" },
+  { name: "Manage Flights", path: "/all-flights" },
+  { name: "Logout", path: "/" },
 ];
 
 const operatorMenu = [
-  { name: "Flights", path: "/flight-admin" },
-  { name: "Bookings", path: "/operator/bookings" },
-   { name: "Logout", path: "/" },
+  { name: "Dashboard", path: "/flight-admin" },
+  { name: "Bookings", path: "/flight-bookings" },
+  { name: "Flights", path: "/flights" },
+  { name: "Logout", path: "/" },
 ];
 
 const logoutMenu = [
@@ -42,6 +45,13 @@ const Navbar = () => {
       ? operatorMenu
       : customerMenu
     : logoutMenu;
+
+  function capitalizeFirstLetter(str) {
+    if (typeof str !== "string" || str.length === 0) {
+      return str; // Handle non-string input or empty strings
+    }
+    return '('+str.charAt(0).toUpperCase() + str.slice(1)+')';
+  }
 
   const handlePath = async (item) => {
     if (item.name === "Logout") {
@@ -75,7 +85,11 @@ const Navbar = () => {
               navigate("/");
             }}
           >
-            Flight Booking
+            {`SB Flight Booking ${
+              ["admin", "operator"].includes(userType)
+                ? capitalizeFirstLetter(userType)
+                : ""
+            }`}
           </button>
         </div>
         {
@@ -84,7 +98,7 @@ const Navbar = () => {
               <button
                 key={idx}
                 type="button"
-                className="hover:cursor-pointer hover:underline"
+                className="hover:cursor-pointer hover:underline hover:scale-105 active:scale-95 transition duration-75"
                 onClick={() => {
                   handlePath(item);
                 }}

@@ -5,14 +5,15 @@ const AllUsers = () => {
   const [users, setUsers] = useState([]);
 
   const fetchUsers = async () => {
-    await api.get("/admin/fetch-users")
-    .then((response) => {
-      // console.log(response.data)
-      setUsers(response.data);
-    })
-    .catch((err)=>{
-      console.log("fetech users error: ",err)
-    });
+    await api
+      .get("/admin/fetch-users")
+      .then((response) => {
+        // console.log(response.data)
+        setUsers(response.data);
+      })
+      .catch((err) => {
+        console.log("fetech users error: ", err);
+      });
   };
 
   useEffect(() => {
@@ -21,9 +22,9 @@ const AllUsers = () => {
 
   return (
     <>
-      <div className="all-users-page">
-        <h2>All Users</h2>
-        <div className="all-users">
+      <div className="page">
+        <h2 className="text-2xl font-semibold text-blue-600">All Users</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8 p-4">
           {users
             .filter((user) => user.userType === "customer")
             .map((user) => {
@@ -46,8 +47,10 @@ const AllUsers = () => {
             })}
         </div>
 
-        <h2>Flight Operators</h2>
-        <div className="all-users">
+        <h2 className="text-2xl font-semibold text-blue-600 ">
+          Flight Operators
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8 p-4">
           {users
             .filter((user) => user.userType === "operator")
             .map((user) => {

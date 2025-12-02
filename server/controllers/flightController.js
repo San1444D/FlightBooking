@@ -48,9 +48,9 @@ const updateFlight = async (req, res) => {
 const fetchFlight = async (req, res) => {
 
     try {
-        const flights = await Flight.find();
+        const cacheId = `flights_all`;
+        const flights = getOrSetCache(cacheId, async () => { return await Flight.find(); }, 30)
         res.json(flights);
-
     } catch (err) {
         console.log(err);
     }
@@ -63,7 +63,6 @@ const fetchFlightById = async (req, res) => {
         const flight = await Flight.findById(req.params.id);
         // console.log(flight);
         res.json(flight);
-
     } catch (err) {
         console.log(err);
     }
@@ -88,14 +87,7 @@ const fetchBookings = async (req, res) => {
             bookings = await getOrSetCache(cacheId, async () => {
                 return await Booking.find({ user: userId });
             }, 30) // Cache for 60 seconds;
-        } 
-        // else {
-        //     bookings = await getOrSetCache(cacheId, async () => {
-        //         return await Booking.find({});
-        //     }, 30); // Cache for 60 seconds;
-        // }
-
-        console.log('Bookings : ', bookings.length);
+        }
         return res.json(bookings);
 
     } catch (err) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import api from "../../axiosHelper";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -23,54 +24,55 @@ const Bookings = () => {
     await api
       .put(`/customer/cancel-ticket/${id}`)
       .then((response) => {
-        alert("Ticket cancelled!!");
+        toast.success("Ticket cancelled!!");
         fetchBookings();
       });
   };
 
   return (
-    <div className="user-bookingsPage">
-      <h1>Bookings</h1>
+    <div className="page">
+      <h1 className="text-2xl text-blue-500 font-semibold">Bookings</h1>
 
-      <div className="user-bookings">
+      <div className="p-2 m-2 grid grid-cols-2 gap-2">
         {bookings
           .filter((booking) => booking.user === userId)
           .map((booking) => {
             return (
-              <div className="user-booking" key={booking._id}>
+              <div
+              className="border max-w-200 p-4 gap-2 rounded-md  bg-white shadow-2xl text-blue-500"
+              key={booking._id}
+            >
+              <p>
+                <b>Booking ID:</b> {booking._id}
+              </p>
+              <div className="grid grid-cols-2 gap-1 mb-2">
                 <p>
-                  <b>Booking ID:</b> {booking._id}
+                  <b>Mobile:</b> {booking.mobile}
                 </p>
-                <span>
-                  <p>
-                    <b>Mobile:</b> {booking.mobile}
-                  </p>
-                  <p>
-                    <b>Email:</b> {booking.email}
-                  </p>
-                </span>
-                <span>
-                  <p>
-                    <b>Flight Id:</b> {booking.flightId}
-                  </p>
-                  <p>
-                    <b>Flight name:</b> {booking.flightName}
-                  </p>
-                </span>
-                <span>
-                  <p>
-                    <b>On-boarding:</b> {booking.departure}
-                  </p>
-                  <p>
-                    <b>Destination:</b> {booking.destination}
-                  </p>
-                </span>
-                <span>
+                <p>
+                  <b>Email:</b> {booking.email}
+                </p>
+
+                <p>
+                  <b>Flight Id:</b> {booking.flightId}
+                </p>
+                <p>
+                  <b>Flight name:</b> {booking.flightName}
+                </p>
+
+                <p>
+                  <b>On-boarding:</b> {booking.departure}
+                </p>
+                <p>
+                  <b>Destination:</b> {booking.destination}
+                </p>
+
+                <span className="col-span-2">
                   <div>
                     <p>
                       <b>Passengers:</b>
                     </p>
-                    <ol>
+                    <ol className="pl-8 list-decimal">
                       {booking.passengers.map((passenger, i) => {
                         return (
                           <li key={i}>
@@ -91,24 +93,23 @@ const Bookings = () => {
                     ""
                   )}
                 </span>
-                <span>
-                  <p>
-                    <b>Booking date:</b> {booking.bookingDate.slice(0, 10)}
-                  </p>
-                  <p>
-                    <b>Journey date:</b> {booking.journeyDate.slice(0, 10)}
-                  </p>
-                </span>
-                <span>
-                  <p>
-                    <b>Journey Time:</b> {booking.journeyTime}
-                  </p>
-                  <p>
-                    <b>Total price:</b> {booking.totalPrice}
-                  </p>
-                </span>
+
+                <p>
+                  <b>Booking date:</b> {booking.bookingDate.slice(0, 10)}
+                </p>
+                <p>
+                  <b>Journey date:</b> {booking.journeyDate.slice(0, 10)}
+                </p>
+
+                <p>
+                  <b>Journey Time:</b> {booking.journeyTime}
+                </p>
+                <p>
+                  <b>Total price:</b> {booking.totalPrice}
+                </p>
+
                 {booking.bookingStatus === "cancelled" ? (
-                  <p style={{ color: "red" }}>
+                  <p className="text-red-500">
                     <b>Booking status:</b> {booking.bookingStatus}
                   </p>
                 ) : (
@@ -117,9 +118,9 @@ const Bookings = () => {
                   </p>
                 )}
                 {booking.bookingStatus === "confirmed" ? (
-                  <div>
+                  <div className="inline-flex justify-end">
                     <button
-                      className="btn btn-danger"
+                      className="btn mt-2 bg-red-400 hover:bg-600 "
                       onClick={() => cancelTicket(booking._id)}
                     >
                       Cancel Ticket
@@ -129,6 +130,7 @@ const Bookings = () => {
                   <></>
                 )}
               </div>
+            </div>
             );
           })}
       </div>
