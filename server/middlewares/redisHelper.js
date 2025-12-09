@@ -4,7 +4,12 @@ const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
 const DEFAULT_EXPIRATION = process.env.DEFAULT_EXPIRATION || 30 * 60; // 30 MIN *  * 
 const client = createClient({
-    url: REDIS_URL
+    username: 'default',
+    password: 'h1EatYlWEUd7wJCrE4nCXVBwx1BkdTcO',
+    socket: {
+        host: 'redis-12473.c212.ap-south-1-1.ec2.cloud.redislabs.com',
+        port: 12473
+    }
 });
 client.on("error", (err) => console.log("Redis Client Error", err))
 client.connect()
