@@ -29,13 +29,14 @@ try {
 }
 
 const app = express()
-
+app.set('trust proxy', true);
 // --- Middleware ---
 // Parse JSON bodies (use express.json() directly in newer projects if preferred)
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(cookieParser()) // <- required to populate req.cookies
 app.use(limiter); // Apply rate limiting middleware
+
 
 // Enable CORS. For production, restrict origins via options: `cors({ origin: 'https://example.com' })`.
 app.use(cors(

@@ -35,6 +35,7 @@ import {
   updateUserType,
 } from "./slicers/AuthSlice";
 
+
 function App() {
   const userType = useSelector((state) => state.auth.userType);
   const navigate = useNavigate();
@@ -49,10 +50,11 @@ function App() {
         dispatch(updateUser(response.data.userData));
         dispatch(setLoginStatus(true));
         dispatch(updateUserType(response.data.userData.userType));
-      } catch {
+      } catch (err) {
         dispatch(updateToken(null));
         dispatch(setLoginStatus(false));
         localStorage.removeItem("userType");
+        console.log(err)
       } finally {
         if (mounted) {
           dispatch(setInitialized(true));
