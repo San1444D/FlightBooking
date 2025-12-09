@@ -5,12 +5,12 @@ import RedisClient from 'ioredis'
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
 // Create a `ioredis` client
-// const client = new RedisClient(REDIS_URL)
 const client = new RedisClient({
-	username: 'default',
-	password: 'h1EatYlWEUd7wJCrE4nCXVBwx1BkdTcO',
+    username: 'default',
+    password: 'h1EatYlWEUd7wJCrE4nCXVBwx1BkdTcO',
 	host: 'redis-12473.c212.ap-south-1-1.ec2.cloud.redislabs.com',
-	port: 12473
+	port: 12473,
+
 })
 // ... (see https://github.com/luin/ioredis#connect-to-redis)
 
@@ -27,6 +27,16 @@ const limiter = rateLimit({
 		sendCommand: (command: string, ...args: string[]) =>
 			client.call(command, ...args) as Promise<RedisReply>,
 	}),
+// 	store: new RedisStore({
+//     // sendCommand is the function rate-limit-redis uses to send commands to Redis
+//     sendCommand: async (command, ...args) => {
+//       // Ensure the client is open before sending commands
+//       if (!client.isOpen) {
+//         await client.connect();
+//       }
+//       return client.call(command, ...args);
+//     },
+//   }),
 })
 
 export { limiter }

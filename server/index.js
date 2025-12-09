@@ -12,7 +12,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { connectDB } from './connect.js';
-import { limiter } from './middlewares/rateLimiter.ts';
+import { limiter } from './middlewares/rateLimiter.js';
 
 // Load environment variables from `server/.env` (MONGODB_URI, JWT_SECRET, PORT, etc.)
 dotenv.config()
