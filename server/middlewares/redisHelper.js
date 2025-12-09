@@ -1,20 +1,21 @@
 import { createClient } from 'redis';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
+console.log('Connecting to Redis at:', REDIS_URL);
+
 const DEFAULT_EXPIRATION = process.env.DEFAULT_EXPIRATION || 30 * 60; // 30 MIN *  * 
 const client = createClient({
-    username: 'default',
-    password: 'h1EatYlWEUd7wJCrE4nCXVBwx1BkdTcO',
-    socket: {
-        host: 'redis-12473.c212.ap-south-1-1.ec2.cloud.redislabs.com',
-        port: 12473
-    }
+    url: REDIS_URL
 });
 client.on("error", (err) => console.log("Redis Client Error", err))
 client.connect()
     .then(() => { console.log("✅ Connected to Redis"); })
     .catch((err) => { console.error("❌ Redis connection error:", err); });
+
 
 const getOrSetCache = async (key, cb, expiration = DEFAULT_EXPIRATION) => {
     try {

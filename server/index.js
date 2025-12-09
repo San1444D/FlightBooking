@@ -5,17 +5,16 @@
 // - Registers middleware (body parsers, CORS)
 // - Mounts routers from `server/routes/`
 // - Starts the HTTP server
+import dotenv from 'dotenv';
+// Load environment variables from `server/.env` (MONGODB_URI, JWT_SECRET, PORT, etc.)
+dotenv.config()
 
 import express from 'express';
-import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { connectDB } from './connect.js';
-import { limiter } from './middlewares/rateLimiter.js';
 
-// Load environment variables from `server/.env` (MONGODB_URI, JWT_SECRET, PORT, etc.)
-dotenv.config()
 
 // Connect to the database.
 // Implement `connectDB` in `server/connect.js` to export a named function `connectDB`.
@@ -35,6 +34,9 @@ app.set('trust proxy', true);
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(cookieParser()) // <- required to populate req.cookies
+
+import { configRateLimiter } from './middlewares/rateLimiter.js';
+const limiter = configRateLimiter();
 app.use(limiter); // Apply rate limiting middleware
 
 
