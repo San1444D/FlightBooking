@@ -28,22 +28,22 @@ try {
 }
 
 const app = express()
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 // --- Middleware ---
 // Parse JSON bodies (use express.json() directly in newer projects if preferred)
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(cookieParser()) // <- required to populate req.cookies
 
-import { configRateLimiter } from './middlewares/rateLimiter.js';
-const limiter = configRateLimiter();
+import { limiter } from './middlewares/rateLimiter.js';
+// const limiter = configRateLimiter();
 app.use(limiter); // Apply rate limiting middleware
 
 
 // Enable CORS. For production, restrict origins via options: `cors({ origin: 'https://example.com' })`.
 app.use(cors(
     {
-        origin: process.env.CORS_ORIGIN || '*',
+        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
