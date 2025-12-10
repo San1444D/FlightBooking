@@ -28,7 +28,7 @@ try {
 }
 
 const app = express()
-app.set('trust proxy', 'loopback'); // trust first proxy
+app.set('trust proxy', 2); // trust first proxy
 // --- Middleware ---
 // Parse JSON bodies (use express.json() directly in newer projects if preferred)
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
