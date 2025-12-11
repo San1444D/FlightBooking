@@ -74,7 +74,7 @@ const Navbar = () => {
       <nav className="navbar">
         <div className="flex items-center gap-2 ml-2">
           <img
-            src="https://placehold.co/400"
+            src="/logo.png"
             alt=""
             srcSet=""
             className="size-10"
