@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { handleLogout } from "../slicers/AuthSlice";
 import { toast } from "react-toastify";
+import logo from "/logo.png"
 
 const customerMenu = [
   { name: "Home", path: "/" },
@@ -74,7 +75,7 @@ const Navbar = () => {
       <nav className="navbar">
         <div className="flex items-center gap-2 ml-2">
           <img
-            src="/logo.png"
+            src={logo}
             alt=""
             srcSet=""
             className="size-10"
